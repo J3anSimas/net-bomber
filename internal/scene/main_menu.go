@@ -2,13 +2,14 @@ package scene
 
 import (
 	"bytes"
+	"image/color"
+	"log"
+	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
-	"image/color"
-	"log"
-	"os"
 )
 
 var (
@@ -30,7 +31,7 @@ func (m *MainMenu) EnterState() error {
 	mplusFaceSource = s
 	return nil
 }
-func (m *MainMenu) Update() error {
+func (m *MainMenu) Update(gameC GameController) error {
 	if repeatingKeyPressed(ebiten.KeyUp) || repeatingKeyPressed(ebiten.KeyW) {
 		if m.cursor > 0 {
 			m.cursor--
@@ -45,10 +46,14 @@ func (m *MainMenu) Update() error {
 		if m.cursor == len(m.choices)-1 {
 			os.Exit(0)
 		}
+		if m.cursor == 0 {
+			windowWidth, windowHeight := gameC.GetWindowSize()
+			gameC.SetScene(NewGameLobby(windowWidth, windowHeight))
+		}
 	}
 	return nil
-}
 
+}
 func (m *MainMenu) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{R: 27, G: 34, B: 61, A: 255})
 	op := &text.DrawOptions{}
@@ -94,3 +99,5 @@ func NewMainMenu() *MainMenu {
 		cursor:  0,
 	}
 }
+
+var _ Scene = (*MainMenu)(nil)
