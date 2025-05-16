@@ -1,12 +1,6 @@
 package scene
 
-import (
-	"image/color"
-
-	"github.com/hajimehoshi/ebiten/v2/vector"
-
-	"github.com/hajimehoshi/ebiten/v2"
-)
+import rl "github.com/gen2brain/raylib-go/raylib"
 
 type PlayerInfo struct {
 	name string
@@ -18,17 +12,8 @@ type GameLobby struct {
 }
 
 // Draw implements Scene.
-func (g *GameLobby) Draw(screen *ebiten.Image) {
-	offset := 20
-	windowWidth, windowHeight := ebiten.WindowSize()
-	vector.StrokeRect(screen, float32(0+offset), float32(0+offset), float32(windowWidth-offset*2), float32(windowHeight-offset*2), 5, color.White, true)
-	// if i < len(g.players) {
-	// 	player := g.players[i]
-	//
-	// }
-	for i := range 4 {
-		vector.StrokeRect(screen, float32(offset+16+(i*offset+16)), 16, 304, 500, 2, color.RGBA{255, 0, 0, 255}, true)
-	}
+func (g *GameLobby) Draw() {
+	rl.DrawText("Game Lobby", 10, 10, 20, rl.Black)
 }
 
 // EnterState implements Scene.
@@ -38,11 +23,11 @@ func (g *GameLobby) EnterState() error {
 }
 
 // Update implements Scene.
-func (g *GameLobby) Update(gameC GameController) error {
-	return nil
+func (g *GameLobby) Update(gameC GameController) (Scene, error) {
+	return nil, nil
 }
 
-func NewGameLobby(windowWidth, windowHeight int) *GameLobby {
+func NewGameLobby(windowWidth, windowHeight int32) *GameLobby {
 	return &GameLobby{}
 }
 

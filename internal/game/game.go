@@ -2,18 +2,19 @@ package game
 
 import (
 	"log"
-	"snake-go/internal/scene"
 
-	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/j3ansimas/net-bomber/internal/scene"
 )
 
 type Game struct {
 	currentScene   scene.Scene
 	mainMenuScene  *scene.MainMenu
 	gameLobbyScene *scene.GameLobby
+	WindowWidth    int32
+	WindowHeight   int32
 }
 
-func NewGame(winWidth, winHeight int) ebiten.Game {
+func NewGame(winWidth, winHeight int32) *Game {
 	mainMenu := scene.NewMainMenu()
 	gameLobby := scene.NewGameLobby(winWidth, winHeight)
 	err := mainMenu.EnterState()
@@ -21,9 +22,11 @@ func NewGame(winWidth, winHeight int) ebiten.Game {
 		log.Fatal(err)
 	}
 	return &Game{
-		currentScene:   gameLobby,
+		currentScene:   mainMenu,
 		mainMenuScene:  mainMenu,
 		gameLobbyScene: gameLobby,
+		WindowWidth:    winWidth,
+		WindowHeight:   winHeight,
 	}
 }
 func (g *Game) EnterState() error {
@@ -35,15 +38,18 @@ func (g *Game) EnterState() error {
 }
 
 func (g *Game) Update() error {
-	err := g.currentScene.Update(g)
+	scn, err := g.currentScene.Update(g)
 	if err != nil {
 		return err
+	}
+	if scn != nil {
+		g.SetScene(scn)
 	}
 	return nil
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
-	g.currentScene.Draw(screen)
+func (g *Game) Draw() {
+	g.currentScene.Draw()
 	return
 }
 
@@ -57,8 +63,8 @@ func (g *Game) SetScene(scene scene.Scene) {
 		log.Fatal(err)
 	}
 }
-func (g *Game) GetWindowSize() (int, int) {
-	return ebiten.WindowSize()
+func (g *Game) GetWindowSize() (int32, int32) {
+	return g.WindowWidth, g.WindowHeight
 }
 
 // var _ scene.GameController = (*Game)(nil)

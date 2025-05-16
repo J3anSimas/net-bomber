@@ -1,24 +1,43 @@
 package main
 
 import (
-	"log"
-	"snake-go/internal/game"
+	"fmt"
+	"os"
 
-	"github.com/hajimehoshi/ebiten/v2"
+	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/j3ansimas/net-bomber/internal/game"
+	"github.com/joho/godotenv"
 )
 
 var (
-	WINDOW_WIDTH  = 1280
-	WINDOW_HEIGHT = 720
+	WINDOW_WIDTH  int32 = 1280
+	WINDOW_HEIGHT int32 = 720
 )
 
 func main() {
-	ebiten.SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-	ebiten.SetWindowTitle("Net Bomber")
-	ebiten.SetVsyncEnabled(true)
+	godotenv.Load()
+	env := os.Getenv("ENV")
+	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "raylib [core] example - basic window")
+	defer rl.CloseWindow()
+	rl.SetTargetFPS(60)
 
-	game := game.NewGame(WINDOW_WIDTH, WINDOW_HEIGHT)
-	if err := ebiten.RunGame(game); err != nil {
-		log.Fatal(err)
+	g := game.NewGame(WINDOW_WIDTH, WINDOW_HEIGHT)
+	_ = g
+	fmt.Printf("Environment: %s", env)
+	if env == "dev" {
+		fmt.Println("Dev mode")
+		monitorCount := rl.GetMonitorCount()
+		if monitorCount > 1 {
+			// Move a janela para o segundo monitor (índice 1)
+			rl.SetWindowMonitor(1)
+		}
+	}
+	for !rl.WindowShouldClose() {
+		rl.BeginDrawing()
+		g.Update()
+		g.Draw()
+		rl.ClearBackground(rl.RayWhite)
+
+		rl.EndDrawing()
 	}
 }

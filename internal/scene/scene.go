@@ -1,18 +1,14 @@
 package scene
 
-import (
-	"github.com/hajimehoshi/ebiten/v2"
-)
-
 type Scene interface {
-	Update(gameC GameController) error
+	Update(gameC GameController) (Scene, error)
 	EnterState() error
-	Draw(screen *ebiten.Image)
+	Draw()
 }
 type GameController interface {
 	Update() error
 	EnterState() error
-	Draw(screen *ebiten.Image)
+	Draw()
 	SetScene(scene Scene)
-	GetWindowSize() (int, int)
+	GetWindowSize() (int32, int32)
 }
